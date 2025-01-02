@@ -1,15 +1,12 @@
 import { Game } from '@/lib/Game.js';
+import chalk from 'chalk';
 
 export class InputController {
   private game: Game;
 
   constructor(game: Game) {
     if (this.game) {
-      game.logger.warn('Controller is already connected.');
-      return;
-    }
-    if (!game.logger) {
-      game.logger.warn('No logger found on the game controller, initialise this first.');
+      console.warn(chalk.yellow('Controller is already connected.'));
       return;
     }
 
@@ -18,21 +15,23 @@ export class InputController {
     process.stdin.resume();
     process.stdin.setEncoding('utf8');
     process.stdin.on('data', this.handleKeyPress.bind(this));
-    this.game.logger.success('⏏ Input controller has been enabled');
+    console.log(chalk.yellow('⏏ Input controller has been enabled'));
   }
 
   private handleKeyPress(key: Buffer): void {
     const keyString = key.toString();
 
     const keyMap: Record<string, () => void> = {
-      '\u001B\u005B\u0041': () => this.game.emit('up'),    // Up arrow
-      '\u001B\u005B\u0042': () => this.game.emit('down'),  // Down arrow
-      '\u001B\u005B\u0044': () => this.game.emit('left'),  // Left arrow
-      '\u001B\u005B\u0043': () => this.game.emit('right'), // Right arrow
-      'w': () => this.game.emit('up'),
-      's': () => this.game.emit('down'),
-      'a': () => this.game.emit('left'),
-      'd': () => this.game.emit('right'),
+      '\u001B\u005B\u0041': () => this.game.emit('keydown', 'up'),    // Up arrow
+      '\u001B\u005B\u0042': () => this.game.emit('keydown', 'down'),  // Down arrow
+      '\u001B\u005B\u0044': () => this.game.emit('keydown', 'left'),  // Left arrow
+      '\u001B\u005B\u0043': () => this.game.emit('keydown', 'right'), // Right arrow
+      ' ': () => this.game.emit('keydown', 'submit'),                 // Space bar
+      '\r': () => this.game.emit('keydown', 'submit'),                // Enter
+      'w': () => this.game.emit('keydown', 'up'),
+      's': () => this.game.emit('keydown', 'down'),
+      'a': () => this.game.emit('keydown', 'left'),
+      'd': () => this.game.emit('keydown', 'right'),
       '\u0003': () => process.exit()
     };
 

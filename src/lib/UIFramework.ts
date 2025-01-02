@@ -1,7 +1,8 @@
 import { Game } from '@/lib/Game';
 import { Screen } from './Screen';
-import { MenuScreen } from '@/screens/Menu.screen';
+import { MenuScreen } from '@/screens/Menu';
 import { ANSI } from '@/utils/ansi';
+import chalk from 'chalk';
 
 const REQUIRED_CLI_WIDTH = 150;
 
@@ -20,20 +21,22 @@ export class UIFramework {
   constructor(game: Game) {
     this.game = game;
     this.currentScreen = new MenuScreen();
-    console.log('constructor', this.currentScreen);
     process.stdout.on("resize", onResize);
-    game.logger.success('⌘ UI Framework has been enabled');
+    console.log(chalk.yellow('⌘ UI Framework has been enabled'));
   }
 
   startMainLoop() {
     if (this.currentLoop) {
       throw new Error('Attempted to start game loop while game is in session.');
     }
-    this.currentLoop = setInterval(() => this.update(), 1000 / 24);
 
     // Clear the playing area and clear cursor.
+    console.log('_'.repeat(150), '\n');
     console.log([...Array(9)].map((_, i) => i + 1).join('\n'));
     process.stdout.write(ANSI.HIDE_CURSOR);
+
+    // Start gameplay loop.
+    this.currentLoop = setInterval(() => this.update(), 1000 / 24);
   }
 
   stopMainLoop() {
@@ -43,7 +46,7 @@ export class UIFramework {
   }
 
   update() {
-    this.currentScreen.onUpdate();
+    this.currentScreen.update();
   }
 
   emit(event: string, data?: any) {
