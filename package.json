@@ -2,7 +2,7 @@
   "type": "module",
   "name": "card-game",
   "scripts": {
-    "play:dev": "tsx src/start.ts"
+    "play:dev": "tsx src/validate.ts && tsx src/start.ts"
   },
   "devDependencies": {
     "@types/node": "^22.10.3",

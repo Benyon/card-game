@@ -18,30 +18,26 @@ export class InputController {
     process.stdin.resume();
     process.stdin.setEncoding('utf8');
     process.stdin.on('data', this.handleKeyPress.bind(this));
-    this.game.logger.success('🎮 Input controller has been enabled');
+    this.game.logger.success('⏏ Input controller has been enabled');
   }
 
   private handleKeyPress(key: Buffer): void {
     const keyString = key.toString();
 
     const keyMap: Record<string, () => void> = {
-      '\u001B\u005B\u0041': () => this.game.up(),    // Up arrow
-      '\u001B\u005B\u0042': () => this.game.down(),  // Down arrow
-      '\u001B\u005B\u0044': () => this.game.left(),  // Left arrow
-      '\u001B\u005B\u0043': () => this.game.right(), // Right arrow
-      'w': () => this.game.up(),
-      's': () => this.game.down(),
-      'a': () => this.game.left(),
-      'd': () => this.game.right(),
+      '\u001B\u005B\u0041': () => this.game.emit('up'),    // Up arrow
+      '\u001B\u005B\u0042': () => this.game.emit('down'),  // Down arrow
+      '\u001B\u005B\u0044': () => this.game.emit('left'),  // Left arrow
+      '\u001B\u005B\u0043': () => this.game.emit('right'), // Right arrow
+      'w': () => this.game.emit('up'),
+      's': () => this.game.emit('down'),
+      'a': () => this.game.emit('left'),
+      'd': () => this.game.emit('right'),
       '\u0003': () => process.exit()
     };
 
     const action = keyMap[keyString];
-    if (!action) {
-      console.log(`Unrecognized keypress: ${keyString}`);
-      return;
-    }
-
+    if (!action) return;
     action();
   }
 }
